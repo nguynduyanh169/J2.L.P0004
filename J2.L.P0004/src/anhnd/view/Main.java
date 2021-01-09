@@ -10,6 +10,7 @@ import anhnd.dto.BookDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -49,7 +50,6 @@ public class Main extends javax.swing.JFrame {
     public void getBooks() throws SQLException, ClassNotFoundException {
         BookDAO bookDAO = new BookDAO();
         ArrayList<BookDTO> bookDTOs = bookDAO.getBooks();
-        System.out.println(bookDTOs.size());
         bookModel.setRowCount(0);
         for (BookDTO bookDTO : bookDTOs) {
             bookModel.addRow(bookDTO.toVector());
@@ -130,10 +130,20 @@ public class Main extends javax.swing.JFrame {
         });
 
         btnRemove.setText("Remove");
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
 
         cbPublishedYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnFindID.setText("Find By ID");
+        btnFindID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFindIDActionPerformed(evt);
+            }
+        });
 
         checkBoxRent.setText("For rent");
 
@@ -237,8 +247,18 @@ public class Main extends javax.swing.JFrame {
         cbSortByName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnGetAllBook.setText("Get All Book");
+        btnGetAllBook.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGetAllBookActionPerformed(evt);
+            }
+        });
 
         btnSearchByName.setText("Search By Name");
+        btnSearchByName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchByNameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -362,6 +382,10 @@ public class Main extends javax.swing.JFrame {
                         getBooks();
                     }
                 } catch (SQLException ex) {
+                    boolean checkDuplicate = ex.getMessage().contains("duplicate");
+                    if (checkDuplicate) {
+                        JOptionPane.showMessageDialog(this, "BookID has been exist!");
+                    }
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -403,6 +427,88 @@ public class Main extends javax.swing.JFrame {
         cbPublishedYear.setSelectedItem(publishedYear);
         checkBoxRent.setSelected(forRent);
     }//GEN-LAST:event_tblBookMouseClicked
+
+    private void btnFindIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindIDActionPerformed
+        try {
+            String bookID = txtBookID.getText();
+            BookDAO bookDAO = new BookDAO();
+            BookDTO bookDTO = bookDAO.findBookByID(bookID);
+            if (bookDTO == null) {
+                JOptionPane.showMessageDialog(this, "Cannot find book which has ID: " + bookID);
+            } else {
+                isAddNewBook = false;
+                txtBookID.setText(bookDTO.getBookID());
+                txtBookID.setEditable(false);
+                txtBookName.setText(bookDTO.getBookName());
+                txtAuthor.setText(bookDTO.getAuthor());
+                txtPublisher.setText(bookDTO.getPublisher());
+                cbPublishedYear.setSelectedItem(String.valueOf(bookDTO.getPublishedYear()));
+                checkBoxRent.setSelected(bookDTO.isForRent());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnFindIDActionPerformed
+
+    private void btnSearchByNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchByNameActionPerformed
+        try {
+            String searchKey = txtSearchName.getText();
+            BookDAO bookDAO = new BookDAO();
+            List<BookDTO> booksByName = bookDAO.findBooksByLikeName(searchKey);
+            if (booksByName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Cannot find any book with keywords: " + searchKey);
+            } else {
+                bookModel.setRowCount(0);
+                for (BookDTO bookDTO : booksByName) {
+                    bookModel.addRow(bookDTO.toVector());
+                }
+                tblBook.updateUI();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnSearchByNameActionPerformed
+
+    private void btnGetAllBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetAllBookActionPerformed
+        try {
+            txtSearchName.setText("");
+            getBooks();
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnGetAllBookActionPerformed
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+        int pos = tblBook.getSelectedRow();
+        System.out.println(pos);
+        if(pos != -1){
+            String bookID = (String) tblBook.getValueAt(pos, 0);
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure to delete this book?", "Confirm delete book " + bookID, JOptionPane.YES_NO_OPTION);
+            if(confirm == JOptionPane.YES_OPTION){
+                try {
+                    BookDAO bookDAO = new BookDAO();
+                    boolean check = bookDAO.deleteBook(bookID);
+                    if(!check){
+                        JOptionPane.showMessageDialog(rootPane, "Delete Failed");
+                        getBooks();
+                    }else{
+                        getBooks();
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
+        }
+    }//GEN-LAST:event_btnRemoveActionPerformed
 
     /**
      * @param args the command line arguments
