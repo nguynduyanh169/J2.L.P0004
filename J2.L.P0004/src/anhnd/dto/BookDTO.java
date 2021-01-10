@@ -12,7 +12,7 @@ import java.util.Vector;
  * @author anhnd
  */
 public class BookDTO {
-    
+
     private String bookID;
     private String bookName;
     private String author;
@@ -76,8 +76,8 @@ public class BookDTO {
     public void setForRent(boolean forRent) {
         this.forRent = forRent;
     }
-    
-    public Vector toVector(){
+
+    public Vector toVector() {
         Vector v = new Vector();
         v.add(this.bookID);
         v.add(this.bookName);
@@ -85,9 +85,7 @@ public class BookDTO {
         v.add(this.publisher);
         v.add(this.publishedYear);
         v.add(this.forRent);
-        
+
         return v;
     }
-    
-    
 }

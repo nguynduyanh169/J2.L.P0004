@@ -7,9 +7,13 @@ package anhnd.view;
 
 import anhnd.dao.BookDAO;
 import anhnd.dto.BookDTO;
+import java.awt.event.ItemEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Main extends javax.swing.JFrame {
 
+    private static final String BOOKID_REGEX = "^[a-zA-Z0-9 ]+$";
     DefaultTableModel bookModel;
     boolean isAddNewBook = true;
 
@@ -41,10 +46,39 @@ public class Main extends javax.swing.JFrame {
         cbSortByName.addItem("Ascending");
         cbSortByName.addItem("Descending");
         for (int i = 1960; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-            //listYear.add(i + "");
             cbPublishedYear.addItem(i + "");
         }
+    }
 
+    public void sortAscendingByBookName(ArrayList<BookDTO> books) {
+        System.out.println("Asc");
+        Collections.sort(books, new Comparator<BookDTO>() {
+            @Override
+            public int compare(BookDTO o1, BookDTO o2) {
+                return o1.getBookName().compareTo(o2.getBookName());
+            }
+
+        });
+        bookModel.setRowCount(0);
+        for (BookDTO bookDTO : books) {
+            bookModel.addRow(bookDTO.toVector());
+        }
+        tblBook.updateUI();
+    }
+
+    public void sortDescendingByBookName(ArrayList<BookDTO> books) {
+        System.out.println("Desc");
+        Collections.sort(books, new Comparator<BookDTO>() {
+            @Override
+            public int compare(BookDTO o1, BookDTO o2) {
+                return o2.getBookName().compareTo(o1.getBookName());
+            }
+        });
+        bookModel.setRowCount(0);
+        for (BookDTO bookDTO : books) {
+            bookModel.addRow(bookDTO.toVector());
+        }
+        tblBook.updateUI();
     }
 
     public void getBooks() throws SQLException, ClassNotFoundException {
@@ -152,17 +186,25 @@ public class Main extends javax.swing.JFrame {
         detailPanelLayout.setHorizontalGroup(
             detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(detailPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(detailPanelLayout.createSequentialGroup()
-                        .addGap(54, 54, 54)
-                        .addComponent(btnAddNew)
-                        .addGap(103, 103, 103)
-                        .addComponent(btnSave)
-                        .addGap(123, 123, 123)
-                        .addComponent(btnRemove))
-                    .addGroup(detailPanelLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(checkBoxRent)
+                            .addGroup(detailPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cbPublishedYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, detailPanelLayout.createSequentialGroup()
+                        .addGroup(detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(detailPanelLayout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(btnAddNew)
+                                .addGap(103, 103, 103)
+                                .addComponent(btnSave)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnRemove))
                             .addGroup(detailPanelLayout.createSequentialGroup()
                                 .addGroup(detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
@@ -171,22 +213,14 @@ public class Main extends javax.swing.JFrame {
                                     .addComponent(jLabel4))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtBookName)
-                                    .addComponent(txtAuthor)
-                                    .addComponent(txtPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(detailPanelLayout.createSequentialGroup()
                                         .addComponent(txtBookID, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(49, 49, 49)
-                                        .addComponent(btnFindID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                            .addGroup(detailPanelLayout.createSequentialGroup()
-                                .addGroup(detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(checkBoxRent)
-                                    .addGroup(detailPanelLayout.createSequentialGroup()
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(cbPublishedYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
+                                        .addComponent(btnFindID, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
+                                    .addComponent(txtPublisher)
+                                    .addComponent(txtAuthor)
+                                    .addComponent(txtBookName))))
+                        .addGap(92, 92, 92))))
         );
         detailPanelLayout.setVerticalGroup(
             detailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,6 +279,11 @@ public class Main extends javax.swing.JFrame {
         jLabel6.setText("Sort By Name");
 
         cbSortByName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbSortByName.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbSortByNameItemStateChanged(evt);
+            }
+        });
 
         btnGetAllBook.setText("Get All Book");
         btnGetAllBook.addActionListener(new java.awt.event.ActionListener() {
@@ -306,25 +345,22 @@ public class Main extends javax.swing.JFrame {
                             .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(detailPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(57, 57, 57))
+                        .addComponent(detailPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(31, 31, 31))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(appLable)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
                         .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(42, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(detailPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(detailPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         pack();
@@ -354,7 +390,7 @@ public class Main extends javax.swing.JFrame {
         boolean forRent = checkBoxRent.isSelected();
         String errorMessage = "";
         boolean invalid = false;
-        if (bookID.length() > 10 || bookID.isEmpty() || !bookID.matches("^[a-zA-Z0-9 ]+$")) {
+        if (bookID.length() > 10 || bookID.isEmpty() || !bookID.matches(BOOKID_REGEX)) {
             errorMessage += "\n BookID: max length is 10, not contains special characters";
             invalid = true;
         }
@@ -476,6 +512,7 @@ public class Main extends javax.swing.JFrame {
     private void btnGetAllBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetAllBookActionPerformed
         try {
             txtSearchName.setText("");
+            cbSortByName.setSelectedIndex(0);
             getBooks();
         } catch (SQLException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -486,18 +523,17 @@ public class Main extends javax.swing.JFrame {
 
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
         int pos = tblBook.getSelectedRow();
-        System.out.println(pos);
-        if(pos != -1){
+        if (pos != -1) {
             String bookID = (String) tblBook.getValueAt(pos, 0);
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure to delete this book?", "Confirm delete book " + bookID, JOptionPane.YES_NO_OPTION);
-            if(confirm == JOptionPane.YES_OPTION){
+            if (confirm == JOptionPane.YES_OPTION) {
                 try {
                     BookDAO bookDAO = new BookDAO();
                     boolean check = bookDAO.deleteBook(bookID);
-                    if(!check){
-                        JOptionPane.showMessageDialog(rootPane, "Delete Failed");
+                    if (!check) {
+                        JOptionPane.showMessageDialog(rootPane, "Delete Failed!");
                         getBooks();
-                    }else{
+                    } else {
                         getBooks();
                     }
                 } catch (SQLException ex) {
@@ -505,10 +541,43 @@ public class Main extends javax.swing.JFrame {
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
             }
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
+
+    private void cbSortByNameItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSortByNameItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String selected = (String) evt.getItem();
+            if (selected.equals("Ascending")) {
+                ArrayList<BookDTO> books = new ArrayList<BookDTO>();
+                for (int i = 0; i < bookModel.getRowCount(); i++) {
+                    String bookID = (String) tblBook.getValueAt(i, 0);
+                    String bookName = (String) tblBook.getValueAt(i, 1);
+                    String author = (String) tblBook.getValueAt(i, 2);
+                    String publisher = (String) tblBook.getValueAt(i, 3);
+                    String publishedYear = (String) tblBook.getValueAt(i, 4).toString();
+                    boolean forRent = (boolean) tblBook.getValueAt(i, 5);
+                    BookDTO bookDTO = new BookDTO(bookID, bookName, author, publisher, Integer.valueOf(publishedYear), forRent);
+                    books.add(bookDTO);
+                }
+                sortAscendingByBookName(books);
+            } else if (selected.equals("Descending")) {
+                ArrayList<BookDTO> books = new ArrayList<BookDTO>();
+                for (int i = 0; i < bookModel.getRowCount(); i++) {
+                    String bookID = (String) tblBook.getValueAt(i, 0);
+                    String bookName = (String) tblBook.getValueAt(i, 1);
+                    String author = (String) tblBook.getValueAt(i, 2);
+                    String publisher = (String) tblBook.getValueAt(i, 3);
+                    String publishedYear = (String) tblBook.getValueAt(i, 4).toString();
+                    boolean forRent = (boolean) tblBook.getValueAt(i, 5);
+                    BookDTO bookDTO = new BookDTO(bookID, bookName, author, publisher, Integer.valueOf(publishedYear), forRent);
+                    books.add(bookDTO);
+                }
+                sortDescendingByBookName(books);
+            }
+        }
+    }//GEN-LAST:event_cbSortByNameItemStateChanged
 
     /**
      * @param args the command line arguments
