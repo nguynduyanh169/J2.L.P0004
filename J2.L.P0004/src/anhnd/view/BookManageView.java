@@ -5,90 +5,88 @@
  */
 package anhnd.view;
 
-import anhnd.dao.BookDAO;
-import anhnd.dto.BookDTO;
-import java.awt.event.ItemEvent;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import anhnd.controllers.BookController;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
  * @author anhnd
  */
-public class Main extends javax.swing.JFrame {
-
-    private static final String BOOKID_REGEX = "^[a-zA-Z0-9 ]+$";
-    DefaultTableModel bookModel;
-    boolean isAddNewBook = true;
+public class BookManageView extends javax.swing.JFrame {
 
     /**
      * Creates new form Main
      */
-    public Main() throws SQLException, ClassNotFoundException {
+    public BookManageView() {
         initComponents();
-        bookModel = (DefaultTableModel) tblBook.getModel();
-        getBooks();
-        init();
+    }
+    public JButton getBtnAddNew() {
+        return btnAddNew;
     }
 
-    public void init() {
-        cbPublishedYear.removeAllItems();
-        cbSortByName.removeAllItems();
-        cbSortByName.addItem("Ascending");
-        cbSortByName.addItem("Descending");
-        for (int i = 1960; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-            cbPublishedYear.addItem(i + "");
-        }
+    public JButton getBtnFindID() {
+        return btnFindID;
     }
 
-    public void sortAscendingByBookName(ArrayList<BookDTO> books) {
-        System.out.println("Asc");
-        Collections.sort(books, new Comparator<BookDTO>() {
-            @Override
-            public int compare(BookDTO o1, BookDTO o2) {
-                return o1.getBookName().compareTo(o2.getBookName());
-            }
-
-        });
-        bookModel.setRowCount(0);
-        for (BookDTO bookDTO : books) {
-            bookModel.addRow(bookDTO.toVector());
-        }
-        tblBook.updateUI();
+    public JButton getBtnGetAllBook() {
+        return btnGetAllBook;
     }
 
-    public void sortDescendingByBookName(ArrayList<BookDTO> books) {
-        System.out.println("Desc");
-        Collections.sort(books, new Comparator<BookDTO>() {
-            @Override
-            public int compare(BookDTO o1, BookDTO o2) {
-                return o2.getBookName().compareTo(o1.getBookName());
-            }
-        });
-        bookModel.setRowCount(0);
-        for (BookDTO bookDTO : books) {
-            bookModel.addRow(bookDTO.toVector());
-        }
-        tblBook.updateUI();
+    public JButton getBtnRemove() {
+        return btnRemove;
     }
 
-    public void getBooks() throws SQLException, ClassNotFoundException {
-        BookDAO bookDAO = new BookDAO();
-        ArrayList<BookDTO> bookDTOs = bookDAO.getBooks();
-        bookModel.setRowCount(0);
-        for (BookDTO bookDTO : bookDTOs) {
-            bookModel.addRow(bookDTO.toVector());
-        }
-        tblBook.updateUI();
+    public JButton getBtnSave() {
+        return btnSave;
+    }
+
+    public JButton getBtnSearchByName() {
+        return btnSearchByName;
+    }
+
+    public JComboBox<String> getCbPublishedYear() {
+        return cbPublishedYear;
+    }
+
+    public JComboBox<String> getCbSortByName() {
+        return cbSortByName;
+    }
+
+    public JCheckBox getCheckBoxRent() {
+        return checkBoxRent;
+    }
+
+    public JPanel getDetailPanel() {
+        return detailPanel;
+    }
+
+    public JTable getTblBook() {
+        return tblBook;
+    }
+
+    public JTextField getTxtAuthor() {
+        return txtAuthor;
+    }
+
+    public JTextField getTxtBookID() {
+        return txtBookID;
+    }
+
+    public JTextField getTxtBookName() {
+        return txtBookName;
+    }
+
+    public JTextField getTxtPublisher() {
+        return txtPublisher;
+    }
+
+    public JTextField getTxtSearchName() {
+        return txtSearchName;
     }
 
     /**
@@ -143,41 +141,15 @@ public class Main extends javax.swing.JFrame {
 
         jLabel5.setText("Published Year: ");
 
-        txtBookName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBookNameActionPerformed(evt);
-            }
-        });
-
         btnAddNew.setText("Add New");
-        btnAddNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddNewActionPerformed(evt);
-            }
-        });
 
         btnSave.setText("Save");
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
-            }
-        });
 
         btnRemove.setText("Remove");
-        btnRemove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRemoveActionPerformed(evt);
-            }
-        });
 
         cbPublishedYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnFindID.setText("Find By ID");
-        btnFindID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFindIDActionPerformed(evt);
-            }
-        });
 
         checkBoxRent.setText("For rent");
 
@@ -269,35 +241,15 @@ public class Main extends javax.swing.JFrame {
                 "Book ID", "Book Name", "Author", "Publisher", "Published Year", "For Rent"
             }
         ));
-        tblBook.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblBookMouseClicked(evt);
-            }
-        });
         tablePanel.setViewportView(tblBook);
 
         jLabel6.setText("Sort By Name");
 
         cbSortByName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cbSortByName.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbSortByNameItemStateChanged(evt);
-            }
-        });
 
         btnGetAllBook.setText("Get All Book");
-        btnGetAllBook.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGetAllBookActionPerformed(evt);
-            }
-        });
 
         btnSearchByName.setText("Search By Name");
-        btnSearchByName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSearchByNameActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -366,219 +318,6 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBookNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBookNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBookNameActionPerformed
-
-    private void btnAddNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNewActionPerformed
-        isAddNewBook = true;
-        txtBookID.setText("");
-        txtBookID.setEditable(true);
-        txtBookName.setText("");
-        txtPublisher.setText("");
-        txtAuthor.setText("");
-        cbPublishedYear.setSelectedIndex(0);
-        checkBoxRent.setSelected(false);
-    }//GEN-LAST:event_btnAddNewActionPerformed
-
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        String bookID = txtBookID.getText().trim();
-        String bookName = txtBookName.getText().trim();
-        String author = txtAuthor.getText().trim();
-        String publisher = txtPublisher.getText().trim();
-        int publishedYear = Integer.valueOf(cbPublishedYear.getSelectedItem().toString());
-        boolean forRent = checkBoxRent.isSelected();
-        String errorMessage = "";
-        boolean invalid = false;
-        if (bookID.length() > 10 || bookID.isEmpty() || !bookID.matches(BOOKID_REGEX)) {
-            errorMessage += "\n BookID: max length is 10, not contains special characters";
-            invalid = true;
-        }
-        if (bookName.isEmpty() || bookName.length() > 50) {
-            errorMessage += "\n BookName: max length is 50";
-            invalid = true;
-        }
-        if (author.isEmpty() || author.length() > 50) {
-            errorMessage += "\n Author: max length is 50";
-            invalid = true;
-        }
-        if (publisher.isEmpty() || publisher.length() > 50) {
-            errorMessage += "\n Publisher: max length is 50";
-            invalid = true;
-        }
-        if (invalid == true) {
-            JOptionPane.showMessageDialog(this, errorMessage);
-        } else {
-            if (isAddNewBook) {
-                try {
-                    BookDTO bookDTO = new BookDTO(bookID, bookName, author, publisher, publishedYear, forRent);
-                    BookDAO bookDAO = new BookDAO();
-                    boolean check = bookDAO.insertBook(bookDTO);
-                    if (check) {
-                        getBooks();
-                    }
-                } catch (SQLException ex) {
-                    boolean checkDuplicate = ex.getMessage().contains("duplicate");
-                    if (checkDuplicate) {
-                        JOptionPane.showMessageDialog(this, "BookID has been exist!");
-                    }
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else {
-                try {
-                    BookDTO bookDTO = new BookDTO(bookID, bookName, author, publisher, publishedYear, forRent);
-                    BookDAO bookDAO = new BookDAO();
-                    boolean check = bookDAO.updateBook(bookDTO);
-                    if (check) {
-                        getBooks();
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-
-
-    }//GEN-LAST:event_btnSaveActionPerformed
-
-    private void tblBookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBookMouseClicked
-        isAddNewBook = false;
-        int pos = tblBook.getSelectedRow();
-        String bookID = (String) tblBook.getValueAt(pos, 0);
-        String bookName = (String) tblBook.getValueAt(pos, 1);
-        String author = (String) tblBook.getValueAt(pos, 2);
-        String publisher = (String) tblBook.getValueAt(pos, 3);
-        String publishedYear = (String) tblBook.getValueAt(pos, 4).toString();
-        boolean forRent = (boolean) tblBook.getValueAt(pos, 5);
-
-        txtBookID.setText(bookID);
-        txtBookID.setEditable(false);
-        txtBookName.setText(bookName);
-        txtAuthor.setText(author);
-        txtPublisher.setText(publisher);
-        cbPublishedYear.setSelectedItem(publishedYear);
-        checkBoxRent.setSelected(forRent);
-    }//GEN-LAST:event_tblBookMouseClicked
-
-    private void btnFindIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindIDActionPerformed
-        try {
-            String bookID = txtBookID.getText();
-            BookDAO bookDAO = new BookDAO();
-            BookDTO bookDTO = bookDAO.findBookByID(bookID);
-            if (bookDTO == null) {
-                JOptionPane.showMessageDialog(this, "Cannot find book which has ID: " + bookID);
-            } else {
-                isAddNewBook = false;
-                txtBookID.setText(bookDTO.getBookID());
-                txtBookID.setEditable(false);
-                txtBookName.setText(bookDTO.getBookName());
-                txtAuthor.setText(bookDTO.getAuthor());
-                txtPublisher.setText(bookDTO.getPublisher());
-                cbPublishedYear.setSelectedItem(String.valueOf(bookDTO.getPublishedYear()));
-                checkBoxRent.setSelected(bookDTO.isForRent());
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_btnFindIDActionPerformed
-
-    private void btnSearchByNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchByNameActionPerformed
-        try {
-            String searchKey = txtSearchName.getText();
-            BookDAO bookDAO = new BookDAO();
-            List<BookDTO> booksByName = bookDAO.findBooksByLikeName(searchKey);
-            if (booksByName.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Cannot find any book with keywords: " + searchKey);
-            } else {
-                bookModel.setRowCount(0);
-                for (BookDTO bookDTO : booksByName) {
-                    bookModel.addRow(bookDTO.toVector());
-                }
-                tblBook.updateUI();
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_btnSearchByNameActionPerformed
-
-    private void btnGetAllBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetAllBookActionPerformed
-        try {
-            txtSearchName.setText("");
-            cbSortByName.setSelectedIndex(0);
-            getBooks();
-        } catch (SQLException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_btnGetAllBookActionPerformed
-
-    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
-        int pos = tblBook.getSelectedRow();
-        if (pos != -1) {
-            String bookID = (String) tblBook.getValueAt(pos, 0);
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure to delete this book?", "Confirm delete book " + bookID, JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    BookDAO bookDAO = new BookDAO();
-                    boolean check = bookDAO.deleteBook(bookID);
-                    if (!check) {
-                        JOptionPane.showMessageDialog(rootPane, "Delete Failed!");
-                        getBooks();
-                    } else {
-                        getBooks();
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-        }
-    }//GEN-LAST:event_btnRemoveActionPerformed
-
-    private void cbSortByNameItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSortByNameItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String selected = (String) evt.getItem();
-            if (selected.equals("Ascending")) {
-                ArrayList<BookDTO> books = new ArrayList<BookDTO>();
-                for (int i = 0; i < bookModel.getRowCount(); i++) {
-                    String bookID = (String) tblBook.getValueAt(i, 0);
-                    String bookName = (String) tblBook.getValueAt(i, 1);
-                    String author = (String) tblBook.getValueAt(i, 2);
-                    String publisher = (String) tblBook.getValueAt(i, 3);
-                    String publishedYear = (String) tblBook.getValueAt(i, 4).toString();
-                    boolean forRent = (boolean) tblBook.getValueAt(i, 5);
-                    BookDTO bookDTO = new BookDTO(bookID, bookName, author, publisher, Integer.valueOf(publishedYear), forRent);
-                    books.add(bookDTO);
-                }
-                sortAscendingByBookName(books);
-            } else if (selected.equals("Descending")) {
-                ArrayList<BookDTO> books = new ArrayList<BookDTO>();
-                for (int i = 0; i < bookModel.getRowCount(); i++) {
-                    String bookID = (String) tblBook.getValueAt(i, 0);
-                    String bookName = (String) tblBook.getValueAt(i, 1);
-                    String author = (String) tblBook.getValueAt(i, 2);
-                    String publisher = (String) tblBook.getValueAt(i, 3);
-                    String publishedYear = (String) tblBook.getValueAt(i, 4).toString();
-                    boolean forRent = (boolean) tblBook.getValueAt(i, 5);
-                    BookDTO bookDTO = new BookDTO(bookID, bookName, author, publisher, Integer.valueOf(publishedYear), forRent);
-                    books.add(bookDTO);
-                }
-                sortDescendingByBookName(books);
-            }
-        }
-    }//GEN-LAST:event_cbSortByNameItemStateChanged
-
     /**
      * @param args the command line arguments
      */
@@ -593,29 +332,37 @@ public class Main extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BookManageView.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BookManageView.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BookManageView.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BookManageView.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                try {
-                    new Main().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                BookManageView bookManageView = new BookManageView();
+                BookController bookController = new BookController(bookManageView);
+                bookController.init();
             }
         });
     }
