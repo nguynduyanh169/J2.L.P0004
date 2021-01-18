@@ -5,19 +5,15 @@
  */
 package anhnd.controllers;
 
-import anhnd.dao.BookDAO;
 import anhnd.dto.BookDTO;
 import anhnd.impls.repo.BookRepositoryImpl;
 import anhnd.view.BookManageView;
 import java.awt.event.ItemEvent;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -43,7 +39,7 @@ public class BookController {
         bookManageView.getCbSortByName().removeAllItems();
         bookManageView.getCbSortByName().addItem("Ascending");
         bookManageView.getCbSortByName().addItem("Descending");
-        for (int i = Calendar.getInstance().get(Calendar.YEAR); i >= 1960; i--) {
+        for (int i = Calendar.getInstance().get(Calendar.YEAR) - 1; i >= 1960; i--) {
             bookManageView.getCbPublishedYear().addItem(i + "");
         }
         bookManageView.getCbSortByName().addItemListener(new java.awt.event.ItemListener() {
@@ -94,7 +90,6 @@ public class BookController {
                 deleteBook(evt);
             }
         });
-
         getBooks();
         bookManageView.setVisible(true);
     }
