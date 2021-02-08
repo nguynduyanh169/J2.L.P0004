@@ -7,6 +7,7 @@ package anhnd.controllers;
 
 import anhnd.dto.BookDTO;
 import anhnd.impls.repo.BookRepositoryImpl;
+import anhnd.intefaces.repo.IBookRepository;
 import anhnd.view.BookManageView;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class BookController {
 
-    private BookRepositoryImpl bookRepository;
+    private IBookRepository bookRepository;
     private BookManageView bookManageView;
     private DefaultTableModel bookModel;
     private boolean isAddNewBook = true;
@@ -161,6 +162,14 @@ public class BookController {
         }
         if (publisher.isEmpty() || publisher.length() > 50) {
             errorMessage += "\n Publisher: max length is 50";
+            invalid = true;
+        }
+        if(!bookName.contains("Vina")){
+            errorMessage += "\n BookName must contain 'Vina'";
+            invalid = true;
+        }
+        if(publishedYear <= 2000){
+            errorMessage += "\n Published Year must > 2000";
             invalid = true;
         }
         if (invalid == true) {
